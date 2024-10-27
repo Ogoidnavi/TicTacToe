@@ -79,37 +79,59 @@ function player(name, marker) {
 // gameController module to handle game logic
 const gameController = (function () {
 	let player1, player2, currentPlayer;
+	let gameOver = false;
 
 	// Initialize the game with two players and reset the board
 	function initializeGame() {
-		player1 = player('Alice', 'X');
-		player2 = player('Bob', 'O');
-		currentPlayer = player1;
+		const player1Name =
+			document.getElementById('player1-name').value || 'Player 1';
+		const player1Marker = document.getElementById('player1-marker').value;
+		const player2Name =
+			document.getElementById('player2-name').value || 'Player 2';
+		const player2Marker = document.getElementById('player2-marker').value;
+
+		if (player1Marker === player2Marker) {
+			alert('Players must have different markers!');
+			return;
+		}
+		player1 = player(player1Name, player1Marker);
+		player2 = player(player2Name, player2Marker);
+		currentPlayer = player1Marker === 'X' ? player1 : player2;
 		gameBoard.resetBoard();
+		displayController.updateBoard();
+		displayController.updateCurrentTurn(currentPlayer.getName());
+		gameOver = false;
 	}
 
 	// Switch to the next player
 	function switchPlayer() {
 		currentPlayer = currentPlayer === player1 ? player2 : player1;
+		displayController.updateCurrentTurn(currentPlayer.getName());
 	}
 
 	// Make a move on the board
 	function makeMove(row, col) {
+		if (gameOver) {
+			alert('The game is over. Please reset the game to play again.');
+			return;
+		}
+
 		if (gameBoard.getCell(row, col) === '') {
 			gameBoard.setMarker(row, col, currentPlayer.getMarker());
+			displayController.updateBoard();
 			if (checkWin()) {
-				console.log(`${currentPlayer.getName()} wins!`);
-				gameBoard.printBoard();
+				alert(`${currentPlayer.getName()} wins!`);
+				gameOver = true;
 				return;
 			}
 			if (checkDraw()) {
-				console.log("It's a draw!");
-				gameBoard.printBoard();
+				alert("It's a draw!");
+				gameOver = true;
 				return;
 			}
 			switchPlayer();
 		} else {
-			console.log('Cell is already occupied!');
+			alert('Cell is already occupied!');
 		}
 	}
 
@@ -168,17 +190,94 @@ const gameController = (function () {
 		return true;
 	}
 
+	// Reset the game completely
+	function resetGame() {
+		document.getElementById('player1-name').value = '';
+		document.getElementById('player2-name').value = '';
+		document.getElementById('player1-marker').value = 'X';
+		document.getElementById('player2-marker').value = 'O';
+		displayController.updateCurrentTurn(''); // Clear the current turn display
+		gameBoard.resetBoard();
+		displayController.updateBoard();
+		gameOver = false;
+	}
+
 	return {
-		// Expose the initializeGame and makeMove functions
+		// Expose the initializeGame, makeMove, and resetGame functions
 		initializeGame: initializeGame,
 		makeMove: makeMove,
+		resetGame: resetGame,
 	};
 })();
 
-// Example usage:
-gameController.initializeGame();
-gameController.makeMove(0, 0); // Alice
-gameController.makeMove(0, 1); // Bob
-gameController.makeMove(1, 1); // Alice
-gameController.makeMove(0, 2); // Bob
-gameController.makeMove(2, 2); // Alice wins
+// displayController module to handle DOM interactions
+const displayController = (function () {
+	const gameBoardElement = document.getElementById('game-board');
+	const resetButton = document.getElementById('reset-button');
+	const startGameButton = document.getElementById('start-game-button');
+	const currentTurnElement = document.getElementById('current-turn');
+
+	// Create the game board in the DOM
+	function createBoard() {
+		gameBoardElement.innerHTML = '';
+		for (let i = 0; i < 3; i++) {
+			const row = document.createElement('div');
+			row.classList.add('row');
+			for (let j = 0; j < 3; j++) {
+				const cell = document.createElement('div');
+				cell.classList.add('cell');
+				cell.dataset.row = i;
+				cell.dataset.col = j;
+				cell.addEventListener('click', handleCellClick);
+				row.appendChild(cell);
+			}
+			gameBoardElement.appendChild(row);
+		}
+	}
+
+	// Handle cell click events
+	function handleCellClick(event) {
+		const row = event.target.dataset.row;
+		const col = event.target.dataset.col;
+		gameController.makeMove(row, col);
+	}
+
+	// Update the display of the game board
+	function updateBoard() {
+		const board = gameBoard.getBoard();
+		const cells = document.querySelectorAll('.cell');
+		cells.forEach(cell => {
+			const row = cell.dataset.row;
+			const col = cell.dataset.col;
+			cell.textContent = board[row][col];
+		});
+	}
+
+	// Update the display of the current player's turn
+	function updateCurrentTurn(playerName) {
+		currentTurnElement.textContent = playerName
+			? `Current Turn: ${playerName}`
+			: '';
+	}
+
+	// Initialize the display controller
+	function initialize() {
+		createBoard();
+		resetButton.addEventListener('click', gameController.resetGame);
+		startGameButton.addEventListener(
+			'click',
+			gameController.initializeGame
+		);
+	}
+
+	return {
+		initialize: initialize,
+		updateBoard: updateBoard,
+		updateCurrentTurn: updateCurrentTurn,
+	};
+})();
+
+// Initialize the game and display controller
+document.addEventListener('DOMContentLoaded', () => {
+	displayController.initialize();
+});

@@ -3,13 +3,35 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
+		<title>Tic Tac Toe</title>
 		<link rel="stylesheet" href="/Style/normalize.css" />
 		<link rel="stylesheet" href="/Style/style.css" />
-		<script src="/script.js"></script>
+		<script defer src="/script.js"></script>
 	</head>
 	<body>
 		<div id="game-container">
+			<div id="player-setup">
+				<div>
+					<label for="player1-name">Player 1 Name:</label>
+					<input type="text" id="player1-name" />
+					<label for="player1-marker">Marker:</label>
+					<select id="player1-marker">
+						<option value="X">X</option>
+						<option value="O">O</option>
+					</select>
+				</div>
+				<div>
+					<label for="player2-name">Player 2 Name:</label>
+					<input type="text" id="player2-name" />
+					<label for="player2-marker">Marker:</label>
+					<select id="player2-marker">
+						<option value="O">O</option>
+						<option value="X">X</option>
+					</select>
+				</div>
+				<button id="start-game-button">Start Game</button>
+			</div>
+			<div id="current-turn"></div>
 			<div id="game-board"></div>
 			<button id="reset-button">Reset Game</button>
 		</div>
