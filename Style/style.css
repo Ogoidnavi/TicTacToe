@@ -13,25 +13,80 @@ body {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#player-setup {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	margin-bottom: 20px;
+}
+
+#player-setup div {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-right: 10px; /* Add space between player setup sections */
+}
+
+#player-setup label {
+	margin-bottom: 5px;
+	font-weight: bold;
+}
+
+#player-setup input,
+#player-setup select {
+	padding: 5px;
+	margin-bottom: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	width: 100px;
+	text-align: center;
+}
+
+#start-game-button {
+	padding: 10px 20px;
+	font-size: 1rem;
+	cursor: pointer;
+	background-color: #28a745;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	margin-top: 10px;
+}
+
+#start-game-button:hover {
+	background-color: #218838;
+}
+
+#current-turn {
+	margin-bottom: 20px;
+	font-size: 1.2rem;
+	font-weight: bold;
+	color: #333;
 }
 
 #game-board {
 	display: grid;
-	grid-template-columns: repeat(3, 100px);
-	grid-template-rows: repeat(3, 100px);
+	grid-template-columns: repeat(3, 80px);
+	grid-template-rows: repeat(3, 80px);
 	gap: 5px;
 	margin-bottom: 20px;
 }
 
 .cell {
-	width: 100px;
-	height: 100px;
+	width: 80px;
+	height: 80px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	background-color: #fff;
 	border: 2px solid #000;
-	font-size: 2rem;
+	font-size: 1.5rem;
 	cursor: pointer;
 	user-select: none;
 }
@@ -48,6 +103,7 @@ body {
 	color: #fff;
 	border: none;
 	border-radius: 5px;
+	margin-top: 10px; /* Add space above the reset button */
 }
 
 #reset-button:hover {
